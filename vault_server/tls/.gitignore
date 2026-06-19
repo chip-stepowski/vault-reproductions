@@ -4,3 +4,6 @@
 *.csr
 *.pem
 vault-data/
+vault
+*.log
+*.json
