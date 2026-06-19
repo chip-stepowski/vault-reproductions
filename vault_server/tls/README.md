@@ -1,4 +1,4 @@
-# Setting up Vault with TLS:
+# Setting up Vault with TLS
 This outlines the process for setting up a quick Vault cluster with TLS enabled.
 
 ## Steps:
@@ -48,25 +48,19 @@ mkdir vault-data
 ./vault server -config=config.hcl >> vault.log 2>&1 &
 ```
 
-# set addr and init vault
+# Set the Vault addr and initialize Vault
 ```bash
 export VAULT_ADDR='https://127.0.0.1:8200' VAULT_CACERT='./ca.crt'
 vault operator init -key-shares=1 -key-threshold=1 -format=json > init.json
 vault operator unseal <KEY>
 ```
 
-# initializing and unsealing vault, followed by a status should show the HA cluster as https
-```bash
-export VAULT_TOKEN <TOKEN>
-```
-
-# Verify TLS works
+# Verify TLS works via sys/health and the sanitized config
 ```bash
 curl --cacert ca.crt https://127.0.0.1:8200/v1/sys/health
-```
 
-# Check sanitized config
-```bash
+export VAULT_TOKEN <TOKEN>
+
 curl --cacert ca.crt -H "X-Vault-Token: $VAULT_TOKEN" https://127.0.0.1:8200/v1/sys/config/state/sanitized | jq '.data.listeners'
 
 [
@@ -75,11 +69,10 @@ curl --cacert ca.crt -H "X-Vault-Token: $VAULT_TOKEN" https://127.0.0.1:8200/v1/
       "address": "127.0.0.1:8200",
       "tls_cert_file": "./server.crt",
       "tls_client_ca_file": "./ca.crt",
-      "tls_disable": "false",
       "tls_key_file": "./server.key",
       "tls_min_version": "tls12"
     },
     "type": "tcp"
   }
 ]
-```bash
+```
